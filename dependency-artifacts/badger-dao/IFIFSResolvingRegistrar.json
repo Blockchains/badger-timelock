@@ -1,0 +1,544 @@
+{
+  "contractName": "IFIFSResolvingRegistrar",
+  "abi": [
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_subnode",
+          "type": "bytes32"
+        },
+        {
+          "name": "_owner",
+          "type": "address"
+        }
+      ],
+      "name": "register",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_subnode",
+          "type": "bytes32"
+        },
+        {
+          "name": "_owner",
+          "type": "address"
+        },
+        {
+          "name": "_resolver",
+          "type": "address"
+        }
+      ],
+      "name": "registerWithResolver",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "sourceMap": "",
+  "deployedSourceMap": "",
+  "source": "pragma solidity 0.4.24;\n\nimport \"./ens/IPublicResolver.sol\";\n\n\ninterface IFIFSResolvingRegistrar {\n    function register(bytes32 _subnode, address _owner) external;\n    function registerWithResolver(bytes32 _subnode, address _owner, IPublicResolver _resolver) public;\n}\n",
+  "sourcePath": "@aragon/id/contracts/IFIFSResolvingRegistrar.sol",
+  "ast": {
+    "absolutePath": "@aragon/id/contracts/IFIFSResolvingRegistrar.sol",
+    "exportedSymbols": {
+      "IFIFSResolvingRegistrar": [
+        10342
+      ]
+    },
+    "id": 10343,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 10324,
+        "literals": [
+          "solidity",
+          "0.4",
+          ".24"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:16"
+      },
+      {
+        "absolutePath": "@aragon/id/contracts/ens/IPublicResolver.sol",
+        "file": "./ens/IPublicResolver.sol",
+        "id": 10325,
+        "nodeType": "ImportDirective",
+        "scope": 10343,
+        "sourceUnit": 10381,
+        "src": "25:35:16",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "documentation": null,
+        "fullyImplemented": false,
+        "id": 10342,
+        "linearizedBaseContracts": [
+          10342
+        ],
+        "name": "IFIFSResolvingRegistrar",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "body": null,
+            "documentation": null,
+            "id": 10332,
+            "implemented": false,
+            "isConstructor": false,
+            "isDeclaredConst": false,
+            "modifiers": [],
+            "name": "register",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 10330,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 10327,
+                  "name": "_subnode",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 10332,
+                  "src": "121:16:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes32",
+                    "typeString": "bytes32"
+                  },
+                  "typeName": {
+                    "id": 10326,
+                    "name": "bytes32",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "121:7:16",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes32",
+                      "typeString": "bytes32"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 10329,
+                  "name": "_owner",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 10332,
+                  "src": "139:14:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 10328,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "139:7:16",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "120:34:16"
+            },
+            "payable": false,
+            "returnParameters": {
+              "id": 10331,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "163:0:16"
+            },
+            "scope": 10342,
+            "src": "103:61:16",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": null,
+            "id": 10341,
+            "implemented": false,
+            "isConstructor": false,
+            "isDeclaredConst": false,
+            "modifiers": [],
+            "name": "registerWithResolver",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 10339,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 10334,
+                  "name": "_subnode",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 10341,
+                  "src": "199:16:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes32",
+                    "typeString": "bytes32"
+                  },
+                  "typeName": {
+                    "id": 10333,
+                    "name": "bytes32",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "199:7:16",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes32",
+                      "typeString": "bytes32"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 10336,
+                  "name": "_owner",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 10341,
+                  "src": "217:14:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 10335,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "217:7:16",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 10338,
+                  "name": "_resolver",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 10341,
+                  "src": "233:25:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_contract$_IPublicResolver_$10380",
+                    "typeString": "contract IPublicResolver"
+                  },
+                  "typeName": {
+                    "contractScope": null,
+                    "id": 10337,
+                    "name": "IPublicResolver",
+                    "nodeType": "UserDefinedTypeName",
+                    "referencedDeclaration": 10380,
+                    "src": "233:15:16",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_IPublicResolver_$10380",
+                      "typeString": "contract IPublicResolver"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "198:61:16"
+            },
+            "payable": false,
+            "returnParameters": {
+              "id": 10340,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "266:0:16"
+            },
+            "scope": 10342,
+            "src": "169:98:16",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "public"
+          }
+        ],
+        "scope": 10343,
+        "src": "63:206:16"
+      }
+    ],
+    "src": "0:270:16"
+  },
+  "legacyAST": {
+    "absolutePath": "@aragon/id/contracts/IFIFSResolvingRegistrar.sol",
+    "exportedSymbols": {
+      "IFIFSResolvingRegistrar": [
+        10342
+      ]
+    },
+    "id": 10343,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 10324,
+        "literals": [
+          "solidity",
+          "0.4",
+          ".24"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:16"
+      },
+      {
+        "absolutePath": "@aragon/id/contracts/ens/IPublicResolver.sol",
+        "file": "./ens/IPublicResolver.sol",
+        "id": 10325,
+        "nodeType": "ImportDirective",
+        "scope": 10343,
+        "sourceUnit": 10381,
+        "src": "25:35:16",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "documentation": null,
+        "fullyImplemented": false,
+        "id": 10342,
+        "linearizedBaseContracts": [
+          10342
+        ],
+        "name": "IFIFSResolvingRegistrar",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "body": null,
+            "documentation": null,
+            "id": 10332,
+            "implemented": false,
+            "isConstructor": false,
+            "isDeclaredConst": false,
+            "modifiers": [],
+            "name": "register",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 10330,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 10327,
+                  "name": "_subnode",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 10332,
+                  "src": "121:16:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes32",
+                    "typeString": "bytes32"
+                  },
+                  "typeName": {
+                    "id": 10326,
+                    "name": "bytes32",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "121:7:16",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes32",
+                      "typeString": "bytes32"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 10329,
+                  "name": "_owner",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 10332,
+                  "src": "139:14:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 10328,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "139:7:16",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "120:34:16"
+            },
+            "payable": false,
+            "returnParameters": {
+              "id": 10331,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "163:0:16"
+            },
+            "scope": 10342,
+            "src": "103:61:16",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": null,
+            "id": 10341,
+            "implemented": false,
+            "isConstructor": false,
+            "isDeclaredConst": false,
+            "modifiers": [],
+            "name": "registerWithResolver",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 10339,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 10334,
+                  "name": "_subnode",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 10341,
+                  "src": "199:16:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes32",
+                    "typeString": "bytes32"
+                  },
+                  "typeName": {
+                    "id": 10333,
+                    "name": "bytes32",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "199:7:16",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes32",
+                      "typeString": "bytes32"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 10336,
+                  "name": "_owner",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 10341,
+                  "src": "217:14:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 10335,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "217:7:16",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 10338,
+                  "name": "_resolver",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 10341,
+                  "src": "233:25:16",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_contract$_IPublicResolver_$10380",
+                    "typeString": "contract IPublicResolver"
+                  },
+                  "typeName": {
+                    "contractScope": null,
+                    "id": 10337,
+                    "name": "IPublicResolver",
+                    "nodeType": "UserDefinedTypeName",
+                    "referencedDeclaration": 10380,
+                    "src": "233:15:16",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_IPublicResolver_$10380",
+                      "typeString": "contract IPublicResolver"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "198:61:16"
+            },
+            "payable": false,
+            "returnParameters": {
+              "id": 10340,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "266:0:16"
+            },
+            "scope": 10342,
+            "src": "169:98:16",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "public"
+          }
+        ],
+        "scope": 10343,
+        "src": "63:206:16"
+      }
+    ],
+    "src": "0:270:16"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.4.24+commit.e67f0147.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "2.0.1",
+  "updatedAt": "2020-08-30T16:48:34.417Z"
+}

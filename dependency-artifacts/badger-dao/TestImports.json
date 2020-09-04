@@ -1,0 +1,282 @@
+{
+  "contractName": "TestImports",
+  "abi": [
+    {
+      "inputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    }
+  ],
+  "bytecode": "0x6080604052348015600f57600080fd5b50603580601d6000396000f3006080604052600080fd00a165627a7a7230582015aad0a774d7b42deca7978bf24b2687f13d6e88e40d47cede711c0ba0da25ba0029",
+  "deployedBytecode": "0x6080604052600080fd00a165627a7a7230582015aad0a774d7b42deca7978bf24b2687f13d6e88e40d47cede711c0ba0da25ba0029",
+  "sourceMap": "392:113:1:-;;;419:84;8:9:-1;5:2;;;30:1;27;20:12;5:2;419:84:1;392:113;;;;;;",
+  "deployedSourceMap": "392:113:1:-;;;;;",
+  "source": "pragma solidity 0.4.24;\n\nimport \"@aragon/os/contracts/factory/ENSFactory.sol\";\nimport \"@aragon/os/contracts/factory/APMRegistryFactory.sol\";\nimport \"@aragon/os/contracts/factory/EVMScriptRegistryFactory.sol\";\nimport \"@aragon/id/contracts/FIFSResolvingRegistrar.sol\";\nimport \"@aragon/templates-shared/contracts/Migrations.sol\";\n\n\n// HACK to workaround truffle artifact loading on dependencies\ncontract TestImports {\n    constructor() public {\n        // solium-disable-previous-line no-empty-blocks\n    }\n}\n",
+  "sourcePath": "/Users/present/code/badger-dao-template/contracts/test/TestImports.sol",
+  "ast": {
+    "absolutePath": "/Users/present/code/badger-dao-template/contracts/test/TestImports.sol",
+    "exportedSymbols": {
+      "TestImports": [
+        587
+      ]
+    },
+    "id": 588,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 577,
+        "literals": [
+          "solidity",
+          "0.4",
+          ".24"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:1"
+      },
+      {
+        "absolutePath": "@aragon/os/contracts/factory/ENSFactory.sol",
+        "file": "@aragon/os/contracts/factory/ENSFactory.sol",
+        "id": 578,
+        "nodeType": "ImportDirective",
+        "scope": 588,
+        "sourceUnit": 16119,
+        "src": "25:53:1",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "absolutePath": "@aragon/os/contracts/factory/APMRegistryFactory.sol",
+        "file": "@aragon/os/contracts/factory/APMRegistryFactory.sol",
+        "id": 579,
+        "nodeType": "ImportDirective",
+        "scope": 588,
+        "sourceUnit": 15723,
+        "src": "79:61:1",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "absolutePath": "@aragon/os/contracts/factory/EVMScriptRegistryFactory.sol",
+        "file": "@aragon/os/contracts/factory/EVMScriptRegistryFactory.sol",
+        "id": 580,
+        "nodeType": "ImportDirective",
+        "scope": 588,
+        "sourceUnit": 16226,
+        "src": "141:67:1",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "absolutePath": "@aragon/id/contracts/FIFSResolvingRegistrar.sol",
+        "file": "@aragon/id/contracts/FIFSResolvingRegistrar.sol",
+        "id": 581,
+        "nodeType": "ImportDirective",
+        "scope": 588,
+        "sourceUnit": 10323,
+        "src": "209:57:1",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "absolutePath": "@aragon/templates-shared/contracts/Migrations.sol",
+        "file": "@aragon/templates-shared/contracts/Migrations.sol",
+        "id": 582,
+        "nodeType": "ImportDirective",
+        "scope": 588,
+        "sourceUnit": 19644,
+        "src": "267:59:1",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 587,
+        "linearizedBaseContracts": [
+          587
+        ],
+        "name": "TestImports",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "body": {
+              "id": 585,
+              "nodeType": "Block",
+              "src": "440:63:1",
+              "statements": []
+            },
+            "documentation": null,
+            "id": 586,
+            "implemented": true,
+            "isConstructor": true,
+            "isDeclaredConst": false,
+            "modifiers": [],
+            "name": "",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 583,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "430:2:1"
+            },
+            "payable": false,
+            "returnParameters": {
+              "id": 584,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "440:0:1"
+            },
+            "scope": 587,
+            "src": "419:84:1",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "public"
+          }
+        ],
+        "scope": 588,
+        "src": "392:113:1"
+      }
+    ],
+    "src": "0:506:1"
+  },
+  "legacyAST": {
+    "absolutePath": "/Users/present/code/badger-dao-template/contracts/test/TestImports.sol",
+    "exportedSymbols": {
+      "TestImports": [
+        587
+      ]
+    },
+    "id": 588,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 577,
+        "literals": [
+          "solidity",
+          "0.4",
+          ".24"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:1"
+      },
+      {
+        "absolutePath": "@aragon/os/contracts/factory/ENSFactory.sol",
+        "file": "@aragon/os/contracts/factory/ENSFactory.sol",
+        "id": 578,
+        "nodeType": "ImportDirective",
+        "scope": 588,
+        "sourceUnit": 16119,
+        "src": "25:53:1",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "absolutePath": "@aragon/os/contracts/factory/APMRegistryFactory.sol",
+        "file": "@aragon/os/contracts/factory/APMRegistryFactory.sol",
+        "id": 579,
+        "nodeType": "ImportDirective",
+        "scope": 588,
+        "sourceUnit": 15723,
+        "src": "79:61:1",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "absolutePath": "@aragon/os/contracts/factory/EVMScriptRegistryFactory.sol",
+        "file": "@aragon/os/contracts/factory/EVMScriptRegistryFactory.sol",
+        "id": 580,
+        "nodeType": "ImportDirective",
+        "scope": 588,
+        "sourceUnit": 16226,
+        "src": "141:67:1",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "absolutePath": "@aragon/id/contracts/FIFSResolvingRegistrar.sol",
+        "file": "@aragon/id/contracts/FIFSResolvingRegistrar.sol",
+        "id": 581,
+        "nodeType": "ImportDirective",
+        "scope": 588,
+        "sourceUnit": 10323,
+        "src": "209:57:1",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "absolutePath": "@aragon/templates-shared/contracts/Migrations.sol",
+        "file": "@aragon/templates-shared/contracts/Migrations.sol",
+        "id": 582,
+        "nodeType": "ImportDirective",
+        "scope": 588,
+        "sourceUnit": 19644,
+        "src": "267:59:1",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 587,
+        "linearizedBaseContracts": [
+          587
+        ],
+        "name": "TestImports",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "body": {
+              "id": 585,
+              "nodeType": "Block",
+              "src": "440:63:1",
+              "statements": []
+            },
+            "documentation": null,
+            "id": 586,
+            "implemented": true,
+            "isConstructor": true,
+            "isDeclaredConst": false,
+            "modifiers": [],
+            "name": "",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 583,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "430:2:1"
+            },
+            "payable": false,
+            "returnParameters": {
+              "id": 584,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "440:0:1"
+            },
+            "scope": 587,
+            "src": "419:84:1",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "public"
+          }
+        ],
+        "scope": 588,
+        "src": "392:113:1"
+      }
+    ],
+    "src": "0:506:1"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.4.24+commit.e67f0147.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "2.0.1",
+  "updatedAt": "2020-08-30T16:48:34.358Z"
+}
