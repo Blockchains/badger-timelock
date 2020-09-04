@@ -27,7 +27,7 @@ contract SmartTimelock is TokenTimelock, Executor {
         success = execute(to, value, data, txGas);
 
         uint256 postAmount = token().balanceOf(address(this));
-        require(preAmount >= postAmount, "Timelock token balance decreased during operation");
+        require(postAmount >= preAmount, "Timelock token balance decreased during operation");
       }
 
       function vote(IVoting votingApp, uint256 _voteId, bool _supports, bool _executesIfDecided) external {
@@ -37,6 +37,6 @@ contract SmartTimelock is TokenTimelock, Executor {
         votingApp.vote(_voteId, _supports, _executesIfDecided);
 
         uint256 postAmount = token().balanceOf(address(this));
-        require(preAmount >= postAmount, "Timelock token balance decreased during operation");
+        require(postAmount >= preAmount, "Timelock token balance decreased during operation");
       }
 }
