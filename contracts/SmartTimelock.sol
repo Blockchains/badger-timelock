@@ -19,7 +19,15 @@ import "./IVoting.sol";
 contract SmartTimelock is TokenTimelock, Executor {
       constructor (IERC20 token, address beneficiary, uint256 releaseTime) TokenTimelock(token, beneficiary, releaseTime) public {}
 
-      // @ notice Allows the timelock to call arbitrary contracts, as long as it does not reduce it's locked token balance
+      /**
+      * @notice Allows the timelock to call arbitrary contracts, as long as it does not reduce it's locked token balance
+      * @dev Initialization check is implicitly provided by `voteExists()` as new votes can only be
+      *      created via `newVote(),` which requires initialization
+      * @param to Contract address to call
+      * @param value ETH value to send, if any
+      * @param data Encoded data to send
+      * @param txGas Maximum amount of gas to forward
+      */
       function call(address to, uint256 value, bytes memory data, uint256 txGas) public returns (bool success) {        
         require(msg.sender == beneficiary(), "Only beneficiary can execute smart contract calls");
         uint256 preAmount = token().balanceOf(address(this));
@@ -30,6 +38,14 @@ contract SmartTimelock is TokenTimelock, Executor {
         require(postAmount >= preAmount, "Timelock token balance decreased during operation");
       }
 
+      /**
+      * @notice Vote `_supports ? 'yes' : 'no'` in vote #`_voteId`
+      * @dev Initialization check is implicitly provided by `voteExists()` as new votes can only be
+      *      created via `newVote(),` which requires initialization
+      * @param _voteId Id for vote
+      * @param _supports Whether voter supports the vote
+      * @param _executesIfDecided Whether the vote should execute its action if it becomes decided
+      */
       function vote(IVoting votingApp, uint256 _voteId, bool _supports, bool _executesIfDecided) external {
         require(msg.sender == beneficiary(), "Only beneficiary can execute smart contract calls");
         uint256 preAmount = token().balanceOf(address(this));
