@@ -38,6 +38,7 @@ import Survey from '../../dependency-artifacts/badger-dao/Survey.json'
 import Payroll from '../../dependency-artifacts/badger-dao/Payroll.json'
 import Kernel from '../../dependency-artifacts/badger-dao/Kernel.json'
 import TokenManager from '../../dependency-artifacts/badger-dao/TokenManager.json'
+import MiniMeToken from '../../dependency-artifacts/badger-dao/MiniMeToken.json'
 import ERC20 from '../../dependency-artifacts/badger-dao/ERC20.json'
 
 export const deployAragonInfrastructure = async (deployer: Signer) => {
@@ -53,14 +54,13 @@ const createAppInstance = (appId: string, appProxy: string, deployer: Signer): C
     throw new Error(`No artifact found for app ${appName}`)
   }
 
-  console.log(appInfo.name, appInfo.contractName)
-
   // @ts-ignore
   return new Contract(appProxy, appInfo.artifact.abi, deployer)
 }
 
 export const deployBadgerDAO = async (deployer: Signer, params: DAOParams): Promise<BadgerDAO> => {
-  console.log(template.functions)
+
+  console.log('Deploy DAO Instance')
   await (
     await template.newTokenAndInstance(
       params.tokenName,
@@ -78,11 +78,15 @@ export const deployBadgerDAO = async (deployer: Signer, params: DAOParams): Prom
   const tokenEvents = await template.queryFilter(template.filters.DeployToken())
   const appEvents = await template.queryFilter(template.filters.InstalledApp())
 
-  const daoAddress = daoEvents[0].args?.dao
-  const tokenAddress = tokenEvents[0].args?.token
+  const myDaoEvent = daoEvents[daoEvents.length-1];
+  const myTokenEvent = tokenEvents[tokenEvents.length-1];
+  const myAppEvents = appEvents.slice(appEvents.length-4, appEvents.length-1); // 4 app events per DAO
+
+  const daoAddress = daoEvents[daoEvents.length-1].args?.dao
+  const tokenAddress = tokenEvents[tokenEvents.length-1].args?.token
 
   const dao = new Contract(daoAddress, Kernel.abi, deployer)
-  const token = new Contract(tokenAddress, ERC20.abi, deployer)
+  const token = new Contract(tokenAddress, MiniMeToken.abi, deployer)
 
   const EMPTY_CONTRACT = new Contract(ethers.constants.AddressZero, Agent.abi, deployer)
 
@@ -99,7 +103,6 @@ export const deployBadgerDAO = async (deployer: Signer, params: DAOParams): Prom
     const appContract = createAppInstance(event.args?.appId, event.args?.appProxy, deployer)
     // @ts-ignore
     const appName = APP_IDS_TO_NAME[event.args?.appId]
-    console.log(appName, appContract.address, event.args?.appProxy)
 
     if (appName === 'token-manager') {
       badgerDAO.tokenManager = appContract
@@ -108,15 +111,6 @@ export const deployBadgerDAO = async (deployer: Signer, params: DAOParams): Prom
     badgerDAO[appName] = appContract
     }
   }
-
-  console.log({
-    dao: badgerDAO.dao.address,
-    token: badgerDAO.token.address,
-    agent: badgerDAO.agent.address,
-    finance: badgerDAO.finance.address,
-    voting: badgerDAO.voting.address,
-    tokenManager: badgerDAO.tokenManager.address
-  })
-
+  
   return badgerDAO
 }

@@ -54,6 +54,8 @@ contract SmartTimelock is TokenTimelock, Executor, ReentrancyGuard {
         uint256 preAmount = token().balanceOf(address(this));
         
         uint256 claimableTokenAmount = tokenToClaim.balanceOf(address(this));
+        require(claimableTokenAmount > 0, "smart-timelock/no-token-balance-to-claim");
+
         tokenToClaim.transfer(beneficiary(), claimableTokenAmount);
 
         uint256 postAmount = token().balanceOf(address(this));
@@ -69,6 +71,7 @@ contract SmartTimelock is TokenTimelock, Executor, ReentrancyGuard {
         uint256 preAmount = token().balanceOf(address(this));
 
         uint256 etherToTransfer = address(this).balance;
+        require(etherToTransfer > 0, "smart-timelock/no-ether-balance-to-claim");
 
         payable(beneficiary()).transfer(etherToTransfer);
 

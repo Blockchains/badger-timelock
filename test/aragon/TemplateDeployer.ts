@@ -88,7 +88,6 @@ export class TemplateDeployer {
 
   async _checkAppsDeployment() {
     for (const { name, contractName, artifact } of APPS) {
-      console.log('Registering App...', name, contractName )
       await this._registerApp(name, artifact)
     }
   }
@@ -145,7 +144,6 @@ export class TemplateDeployer {
   async _registerApp(name: string, artifact: any) {
     // @ts-ignore
     const app = await deployContract(this.deployer, artifact, undefined, {gasLimit: 12500000 })
-    console.log(`App ${name} deployed at ${app.address}`)
     return this._registerPackage(name, app)
   }
 
