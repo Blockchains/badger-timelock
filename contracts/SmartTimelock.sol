@@ -15,7 +15,11 @@ import "./Executor.sol";
 */
 
 contract SmartTimelock is TokenTimelock, Executor, ReentrancyGuard {
-    constructor (IERC20 token, address beneficiary, uint256 releaseTime) TokenTimelock(token, beneficiary, releaseTime) public {}
+    constructor(
+        IERC20 token,
+        address beneficiary,
+        uint256 releaseTime
+    ) public TokenTimelock(token, beneficiary, releaseTime) {}
 
     event Call(address to, uint256 value, bytes data);
     event ClaimToken(IERC20 token, uint256 amount);
@@ -27,14 +31,18 @@ contract SmartTimelock is TokenTimelock, Executor, ReentrancyGuard {
     }
 
     /**
-    * @notice Allows the timelock to call arbitrary contracts, as long as it does not reduce it's locked token balance
-    * @dev Initialization check is implicitly provided by `voteExists()` as new votes can only be
-    *      created via `newVote(),` which requires initialization
-    * @param to Contract address to call
-    * @param value ETH value to send, if any
-    * @param data Encoded data to send
-    */
-    function call(address to, uint256 value, bytes calldata data) external onlyBeneficiary() nonReentrant() returns (bool success) {        
+     * @notice Allows the timelock to call arbitrary contracts, as long as it does not reduce it's locked token balance
+     * @dev Initialization check is implicitly provided by `voteExists()` as new votes can only be
+     *      created via `newVote(),` which requires initialization
+     * @param to Contract address to call
+     * @param value ETH value to send, if any
+     * @param data Encoded data to send
+     */
+    function call(
+        address to,
+        uint256 value,
+        bytes calldata data
+    ) external onlyBeneficiary() nonReentrant() returns (bool success) {
         uint256 preAmount = token().balanceOf(address(this));
 
         success = execute(to, value, data, gasleft());
@@ -46,15 +54,25 @@ contract SmartTimelock is TokenTimelock, Executor, ReentrancyGuard {
     }
 
     /**
-    * @notice Claim ERC20-compliant tokens other than locked token.
-    * @param tokenToClaim Token to claim balance of.
-    */
-    function claimToken(IERC20 tokenToClaim) external onlyBeneficiary() nonReentrant() {
-        require(address(tokenToClaim) != address(token()), "smart-timelock/no-locked-token-claim");
+     * @notice Claim ERC20-compliant tokens other than locked token.
+     * @param tokenToClaim Token to claim balance of.
+     */
+    function claimToken(IERC20 tokenToClaim)
+        external
+        onlyBeneficiary()
+        nonReentrant()
+    {
+        require(
+            address(tokenToClaim) != address(token()),
+            "smart-timelock/no-locked-token-claim"
+        );
         uint256 preAmount = token().balanceOf(address(this));
-        
+
         uint256 claimableTokenAmount = tokenToClaim.balanceOf(address(this));
-        require(claimableTokenAmount > 0, "smart-timelock/no-token-balance-to-claim");
+        require(
+            claimableTokenAmount > 0,
+            "smart-timelock/no-token-balance-to-claim"
+        );
 
         tokenToClaim.transfer(beneficiary(), claimableTokenAmount);
 
@@ -65,13 +83,16 @@ contract SmartTimelock is TokenTimelock, Executor, ReentrancyGuard {
     }
 
     /**
-    * @notice Claim Ether in contract.
-    */
+     * @notice Claim Ether in contract.
+     */
     function claimEther() external onlyBeneficiary() nonReentrant() {
         uint256 preAmount = token().balanceOf(address(this));
 
         uint256 etherToTransfer = address(this).balance;
-        require(etherToTransfer > 0, "smart-timelock/no-ether-balance-to-claim");
+        require(
+            etherToTransfer > 0,
+            "smart-timelock/no-ether-balance-to-claim"
+        );
 
         payable(beneficiary()).transfer(etherToTransfer);
 

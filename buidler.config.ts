@@ -1,6 +1,7 @@
 import { task, usePlugin } from "@nomiclabs/buidler/config";
 
 usePlugin("@nomiclabs/buidler-waffle");
+usePlugin("solidity-coverage");
 
 // This is a sample Buidler task. To learn how to create your own go to
 // https://buidler.dev/guides/create-task.html
@@ -18,6 +19,9 @@ export default {
     buidlerevm: {
       chaindId: 31337,
       blockGasLimit: 12500000
+    },
+    coverage: {
+      url: 'http://localhost:8555'
     }
   },
   solc: {

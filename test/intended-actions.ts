@@ -58,10 +58,10 @@ describe("Token", function() {
   let daoParams: DAOParams;
   let unlockTime: number;
 
-  let daoCount = 0;
-  let voteId = 0;
+  const daoCount = 0;
+  const voteId = 0;
 
-  let snapshotId: string = "0x0";
+  let snapshotId = "0x0";
 
   let proposalScript: string;
 
@@ -144,7 +144,10 @@ describe("Token", function() {
 
     console.log("Deploy Mocks...");
     tokenGifter = await deployContract(deployer, TokenGifter);
+
     miscToken = await deployContract(deployer, MockToken, ["Misc", "MISC"]);
+
+    await (await miscToken.mint(tokenGifter.address, tokenGifterAmount)).wait();
 
     console.log("Distributing mock token...");
 
@@ -273,6 +276,8 @@ describe("Token", function() {
       const postBalance = await daoSystem.token.balanceOf(
         smartTimelock.address
       );
+
+      expect(preBalance.add(tokenRequestAmount)).to.be.equal(postBalance);
     });
 
     it("Should not be able to transfer locked tokens using call function", async function() {
