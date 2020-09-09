@@ -5,6 +5,7 @@ import SmartTimelock from "../artifacts/SmartTimelock.json";
 import MockToken from "../artifacts/MockToken.json";
 import ERC20 from "../dependency-artifacts/badger-dao/ERC20.json";
 import TokenGifter from "../artifacts/TokenGifter.json";
+import EthGifter from "../artifacts/EthGifter.json";
 
 import {
   deployGnosisSafeInfrastructure,
@@ -29,9 +30,12 @@ import { setEvmSnapshot, revertEvmSnapshot } from "./helpers/ethSnapshot";
 const iSmartTimelock = new ethers.utils.Interface(SmartTimelock.abi);
 const iERC20 = new ethers.utils.Interface(ERC20.abi);
 const iTokenGifter = new ethers.utils.Interface(TokenGifter.abi);
+const iEthGifter = new ethers.utils.Interface(EthGifter.abi);
 
 const tokenGifterAmount = utils.parseEther("500");
 const tokenRequestAmount = utils.parseEther("100");
+
+const ONE_ETHER = utils.parseEther("1");
 
 describe("Token", function() {
   let accounts: Signer[];
@@ -52,6 +56,7 @@ describe("Token", function() {
   let votingApp: Contract;
 
   let tokenGifter: Contract;
+  let ethGifter: Contract;
 
   let miscToken: Contract;
 
@@ -144,6 +149,14 @@ describe("Token", function() {
 
     console.log("Deploy Mocks...");
     tokenGifter = await deployContract(deployer, TokenGifter);
+    ethGifter = await deployContract(deployer, EthGifter);
+
+    await (
+      await deployer.sendTransaction({
+        to: ethGifter.address,
+        value: utils.parseEther("100"),
+      })
+    ).wait();
 
     miscToken = await deployContract(deployer, MockToken, ["Misc", "MISC"]);
 
@@ -259,7 +272,107 @@ describe("Token", function() {
 
     xit("Should be able to vote", async function() {});
 
-    it("Should be able to request tokens and increase balance using call function", async function() {
+    it("EthGifter should be able to transfer eth", async function() {
+      const preBalances = {
+        ethGifter: await provider.getBalance(ethGifter.address),
+        deployer: await provider.getBalance(deployerAddress),
+      };
+
+      await (await ethGifter.requestEth(ONE_ETHER)).wait();
+
+      const postBalances = {
+        ethGifter: await provider.getBalance(ethGifter.address),
+        deployer: await provider.getBalance(deployerAddress),
+      };
+
+      expect(postBalances.ethGifter, "EthGifter loses one ETH").to.be.equal(
+        preBalances.ethGifter.sub(ONE_ETHER)
+      );
+    });
+
+    it("Should be able to claim ether using call function", async function() {
+      const preBalances = {
+        ethGifter: await provider.getBalance(ethGifter.address),
+        timelock: await provider.getBalance(smartTimelock.address),
+      };
+
+      const tx = await smartTimelock
+        .connect(team[0])
+        .call(
+          ethGifter.address,
+          0,
+          iEthGifter.encodeFunctionData("requestEth", [ONE_ETHER])
+        );
+
+      await tx.wait();
+
+      const postBalances = {
+        ethGifter: await provider.getBalance(ethGifter.address),
+        timelock: await provider.getBalance(smartTimelock.address),
+      };
+
+      expect(postBalances.ethGifter, "EthGifter loses one ETH").to.be.equal(
+        preBalances.ethGifter.sub(ONE_ETHER)
+      );
+
+      expect(postBalances.timelock, "Timelock gains one ETH").to.be.equal(
+        preBalances.timelock.add(ONE_ETHER)
+      );
+    });
+
+    it("Should be able to recieve native ether payments", async function() {
+      const preBalances = {
+        deployer: await provider.getBalance(deployerAddress),
+        timelock: await provider.getBalance(smartTimelock.address),
+      };
+
+      await (
+        await deployer.sendTransaction({
+          to: smartTimelock.address,
+          value: ONE_ETHER,
+        })
+      ).wait();
+
+      const postBalances = {
+        deployer: await provider.getBalance(deployerAddress),
+        timelock: await provider.getBalance(smartTimelock.address),
+      };
+
+      expect(postBalances.deployer, "Deployer loses > one ETH").to.be.lt(
+        preBalances.deployer.sub(ONE_ETHER) // Factoring in gas costs
+      );
+
+      expect(postBalances.timelock, "Timelock gains one ETH").to.be.equal(
+        preBalances.timelock.add(ONE_ETHER)
+      );
+    });
+
+    it("Should be able to send ether along with function call", async function() {
+      const preBalances = {
+        team0: await provider.getBalance(teamAddresses[0]),
+        deployer: await provider.getBalance(deployerAddress),
+      };
+      await (
+        await smartTimelock
+          .connect(team[0])
+          .call(deployerAddress, ONE_ETHER, "0x", {
+            value: ONE_ETHER,
+          })
+      ).wait();
+
+      const postBalances = {
+        team0: await provider.getBalance(teamAddresses[0]),
+        deployer: await provider.getBalance(deployerAddress),
+      };
+
+      expect(postBalances.deployer).to.be.equal(
+        preBalances.deployer.add(ONE_ETHER)
+      );
+
+      expect(postBalances.team0).to.be.lt(preBalances.team0.sub(ONE_ETHER)); // Account for gas costs
+    });
+
+    it("Should be able to request tokens and increase balance of locked tokens using call function", async function() {
       const requestTransferAction = iTokenGifter.encodeFunctionData(
         "requestTransfer",
         [daoSystem.token.address, tokenRequestAmount]

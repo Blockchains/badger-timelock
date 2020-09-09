@@ -101,4 +101,9 @@ contract SmartTimelock is TokenTimelock, Executor, ReentrancyGuard {
 
         emit ClaimEther(etherToTransfer);
     }
+
+    /**
+     * @notice Allow timelock to receive Ether
+     */
+    receive() external payable {}
 }
