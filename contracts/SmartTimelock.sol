@@ -42,7 +42,7 @@ contract SmartTimelock is TokenTimelock, Executor, ReentrancyGuard {
         address to,
         uint256 value,
         bytes calldata data
-    ) external onlyBeneficiary() nonReentrant() returns (bool success) {
+    ) external payable onlyBeneficiary() nonReentrant() returns (bool success) {
         uint256 preAmount = token().balanceOf(address(this));
 
         success = execute(to, value, data, gasleft());
