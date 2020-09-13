@@ -12,21 +12,37 @@ import "./Executor.sol";
   This allows the beneficiary to participate in on-chain goverance processes, despite having locked tokens.
 
   Features safety functions to allow beneficiary to claim ETH & ERC20-compliant tokens sent to the timelock contract, accidentially or otherwise.
+
+  An optional 'governor' address has the ability to allow the timelock to send it's tokens to approved destinations. 
+  This is intended to allow the token holder to stake their tokens in approved mechanisms.
 */
 
 contract SmartTimelock is TokenTimelock, Executor, ReentrancyGuard {
+    address internal _governor;
+    mapping(address => bool) internal _transferAllowed;
+
     constructor(
         IERC20 token,
         address beneficiary,
+        address governor,
         uint256 releaseTime
-    ) public TokenTimelock(token, beneficiary, releaseTime) {}
+    ) public TokenTimelock(token, beneficiary, releaseTime) {
+        _governor = governor;
+    }
 
-    event Call(address to, uint256 value, bytes data);
+    event Call(address to, uint256 value, bytes data, bool transfersAllowed);
+    event ApproveTransfer(address to);
+    event RevokeTransfer(address to);
     event ClaimToken(IERC20 token, uint256 amount);
     event ClaimEther(uint256 amount);
 
     modifier onlyBeneficiary() {
         require(msg.sender == beneficiary(), "smart-timelock/only-beneficiary");
+        _;
+    }
+
+    modifier onlyGovernor() {
+        require(msg.sender == _governor, "smart-timelock/only-governor");
         _;
     }
 
@@ -47,10 +63,22 @@ contract SmartTimelock is TokenTimelock, Executor, ReentrancyGuard {
 
         success = execute(to, value, data, gasleft());
 
+        if (!_transferAllowed[to]) {
         uint256 postAmount = token().balanceOf(address(this));
         require(postAmount >= preAmount, "smart-timelock/locked-balance-check");
+        }
 
-        emit Call(to, value, data);
+        emit Call(to, value, data, _transferAllowed[to]);
+    }
+
+    function approveTransfer(address to) external onlyGovernor() {
+        _transferAllowed[to] = true;
+        emit ApproveTransfer(to);
+    }
+
+    function revokeTransfer(address to) external onlyGovernor() {
+        _transferAllowed[to] = false;
+        emit RevokeTransfer(to);
     }
 
     /**
@@ -100,6 +128,13 @@ contract SmartTimelock is TokenTimelock, Executor, ReentrancyGuard {
         require(postAmount >= preAmount, "smart-timelock/locked-balance-check");
 
         emit ClaimEther(etherToTransfer);
+    }
+
+    /**
+     * @notice Governor address
+     */
+    function governor() external view returns (address) {
+        return _governor;
     }
 
     /**

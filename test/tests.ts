@@ -6,6 +6,7 @@ import MockToken from "../artifacts/MockToken.json";
 import ERC20 from "../dependency-artifacts/badger-dao/ERC20.json";
 import TokenGifter from "../artifacts/TokenGifter.json";
 import EthGifter from "../artifacts/EthGifter.json";
+import StakingMock from "../artifacts/StakingMock.json";
 
 import {
   deployGnosisSafeInfrastructure,
@@ -26,11 +27,13 @@ import { deployContract } from "ethereum-waffle";
 import { expect } from "chai";
 import { generateScript } from "./helpers/evmScripts";
 import { setEvmSnapshot, revertEvmSnapshot } from "./helpers/ethSnapshot";
+import { getTokenBalances } from "./helpers/balances";
 
 const iSmartTimelock = new ethers.utils.Interface(SmartTimelock.abi);
 const iERC20 = new ethers.utils.Interface(ERC20.abi);
 const iTokenGifter = new ethers.utils.Interface(TokenGifter.abi);
 const iEthGifter = new ethers.utils.Interface(EthGifter.abi);
+const iStakingMock = new ethers.utils.Interface(StakingMock.abi);
 
 const tokenGifterAmount = utils.parseEther("500");
 const tokenRequestAmount = utils.parseEther("100");
@@ -50,10 +53,15 @@ describe("Token", function() {
   let team: Signer[];
   let teamAddresses: string[];
 
+  let governor: Signer;
+  let governorAddress: string;
+
   let smartTimelock: Contract;
   let safe: Contract;
   let daoSystem: BadgerDAO;
   let votingApp: Contract;
+
+  let stakingMock: Contract;
 
   let tokenGifter: Contract;
   let ethGifter: Contract;
@@ -68,8 +76,6 @@ describe("Token", function() {
 
   let snapshotId = "0x0";
 
-  let proposalScript: string;
-
   before(async function() {
     this.timeout(0);
 
@@ -81,6 +87,9 @@ describe("Token", function() {
     deployer = accounts[0];
     deployerAddress = await deployer.getAddress();
     team = [accounts[1], accounts[2], accounts[3]];
+
+    governor = accounts[5];
+    governorAddress = await governor.getAddress();
 
     minnow = accounts[4];
     minnowAddress = await minnow.getAddress();
@@ -144,17 +153,21 @@ describe("Token", function() {
     smartTimelock = await deployContract(deployer, SmartTimelock, [
       daoSystem.token.address,
       teamAddresses[0],
+      governorAddress,
       BigNumber.from(unlockTime),
     ]);
 
     console.log("Deploy Mocks...");
     tokenGifter = await deployContract(deployer, TokenGifter);
     ethGifter = await deployContract(deployer, EthGifter);
+    stakingMock = await deployContract(deployer, StakingMock, [
+      daoSystem.token.address,
+    ]);
 
     await (
       await deployer.sendTransaction({
         to: ethGifter.address,
-        value: utils.parseEther("100"),
+        value: utils.parseEther("10"),
       })
     ).wait();
 
@@ -438,6 +451,228 @@ describe("Token", function() {
 
       const postBalance = await miscToken.balanceOf(smartTimelock.address);
       expect(postBalance).to.be.equal(0);
+    });
+
+    it("Should not be able to transfer locked tokens to contract without approval", async function() {
+      await (
+        await smartTimelock
+          .connect(team[0])
+          .call(
+            daoSystem.token.address,
+            0,
+            iERC20.encodeFunctionData("approve", [
+              stakingMock.address,
+              ethers.constants.MaxUint256,
+            ])
+          )
+      ).wait();
+      let stakingAmount = utils.parseEther("100");
+      await expect(
+        smartTimelock
+          .connect(team[0])
+          .call(
+            stakingMock.address,
+            0,
+            iStakingMock.encodeFunctionData("stake", [stakingAmount])
+          )
+      ).to.be.reverted;
+    });
+
+    it("Governor should be able to approve contracts", async function() {
+      await (
+        await smartTimelock
+          .connect(governor)
+          .approveTransfer(stakingMock.address)
+      ).wait();
+
+      // Check event emission
+      const approveEvent = await smartTimelock.queryFilter(
+        smartTimelock.filters.ApproveTransfer(),
+        "latest"
+      );
+
+      expect(approveEvent[0].args?.to).to.be.equal(stakingMock.address);
+    });
+
+    it("Governor should be able to revoke approved contracts", async function() {
+      await (
+        await smartTimelock
+          .connect(governor)
+          .approveTransfer(stakingMock.address)
+      ).wait();
+
+      await (
+        await smartTimelock
+          .connect(governor)
+          .revokeTransfer(stakingMock.address)
+      ).wait();
+
+      // Check event emission
+      const revokeEvent = await smartTimelock.queryFilter(
+        smartTimelock.filters.RevokeTransfer(),
+        "latest"
+      );
+
+      expect(revokeEvent[0].args?.to).to.be.equal(stakingMock.address);
+    });
+
+    it("Non-Governor should not be able to approve contracts", async function() {
+      await expect(
+        smartTimelock.connect(team[0]).approveTransfer(stakingMock.address)
+      ).to.been.revertedWith("smart-timelock/only-governor");
+    });
+
+    it("Non-Governor should not be able to revoke approved contracts", async function() {
+      await expect(
+        smartTimelock.connect(team[0]).revokeTransfer(stakingMock.address)
+      ).to.been.revertedWith("smart-timelock/only-governor");
+    });
+
+    describe("Staking on approved contract", function() {
+      let stakingAmount = utils.parseEther("100");
+      beforeEach(async function() {
+        // Approve contract on governor
+        await (
+          await smartTimelock
+            .connect(governor)
+            .approveTransfer(stakingMock.address)
+        ).wait();
+        // Approve staking pool to spend tokens
+        await (
+          await smartTimelock
+            .connect(team[0])
+            .call(
+              daoSystem.token.address,
+              0,
+              iERC20.encodeFunctionData("approve", [
+                stakingMock.address,
+                ethers.constants.MaxUint256,
+              ])
+            )
+        ).wait();
+      });
+
+      it("Should be able to transfer & retrieve locked tokens to contract with active approval", async function() {
+        // Send tokens to staking pool
+        const preBalances = await getTokenBalances(
+          provider,
+          [daoSystem.token.address, stakingMock.address],
+          [smartTimelock.address, stakingMock.address]
+        );
+
+        await (
+          await smartTimelock
+            .connect(team[0])
+            .call(
+              stakingMock.address,
+              0,
+              iStakingMock.encodeFunctionData("stake", [stakingAmount])
+            )
+        ).wait();
+
+        const postStakeBalances = await getTokenBalances(
+          provider,
+          [daoSystem.token.address, stakingMock.address],
+          [smartTimelock.address, stakingMock.address]
+        );
+
+        expect(
+          (postStakeBalances[smartTimelock.address][daoSystem.token.address]).toString(),
+          "Expect timelock to lose stakingAmount of locked tokens"
+        ).to.be.equal(
+          (preBalances[smartTimelock.address][daoSystem.token.address].sub(
+            stakingAmount
+          )).toString()
+        );
+        expect(
+          postStakeBalances[stakingMock.address][daoSystem.token.address],
+          "Expect staking contract to gain stakingAmount of locked tokens"
+        ).to.be.equal(stakingAmount);
+
+        await (
+          await smartTimelock
+            .connect(team[0])
+            .call(
+              stakingMock.address,
+              0,
+              iStakingMock.encodeFunctionData("unstake", [stakingAmount])
+            )
+        ).wait();
+
+        const postUnstakeBalances = await getTokenBalances(
+          provider,
+          [daoSystem.token.address, stakingMock.address],
+          [smartTimelock.address, stakingMock.address]
+        );
+
+        expect(
+          postUnstakeBalances[smartTimelock.address][daoSystem.token.address],
+          "Expect timelock to gain stakingAmount of locked tokens"
+        ).to.be.equal(
+          postStakeBalances[smartTimelock.address][daoSystem.token.address].add(
+            stakingAmount
+          )
+        );
+
+        expect(
+          postUnstakeBalances[smartTimelock.address][daoSystem.token.address].toString(),
+          "Expect timelock to gain stakingAmount of distributed tokens"
+        ).to.be.equal(
+          (preBalances[smartTimelock.address][daoSystem.token.address]).toString()
+        );
+        expect(
+          postUnstakeBalances[stakingMock.address][daoSystem.token.address],
+          "Expect staking contract to lose stakingAmount of locked tokens"
+        ).to.be.equal(0);
+      });
+
+      it("Should not be able to transfer locked tokens to contract with approval revoked", async function() {
+        // Revoke contract on governor
+        await (
+          await smartTimelock
+            .connect(governor)
+            .revokeTransfer(stakingMock.address)
+        ).wait();
+
+        await expect(
+          smartTimelock
+            .connect(team[0])
+            .call(
+              stakingMock.address,
+              0,
+              iStakingMock.encodeFunctionData("stake", [stakingAmount])
+            )
+        ).to.be.reverted;
+      });
+
+      it("Should not be able to retrieve staked tokens on revoked contract", async function() {
+        await (
+          await smartTimelock
+            .connect(team[0])
+            .call(
+              stakingMock.address,
+              0,
+              iStakingMock.encodeFunctionData("stake", [stakingAmount])
+            )
+        ).wait();
+
+        // Revoke contract on governor
+        await (
+          await smartTimelock
+            .connect(governor)
+            .revokeTransfer(stakingMock.address)
+        ).wait();
+
+        await (
+          await smartTimelock
+            .connect(team[0])
+            .call(
+              stakingMock.address,
+              0,
+              iStakingMock.encodeFunctionData("unstake", [stakingAmount])
+            )
+        ).wait();
+      });
     });
   });
 

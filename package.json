@@ -41,7 +41,7 @@
   "scripts": {
     "compile": "npx buidler compile",
     "test": "npx buidler test",
-    "coverage": "npx buidler coverage --network coverage",
+    "coverage": "npx buidler coverage --network coverage2",
     "lint-js": "npx eslint test --ext .ts",
     "lint-sol": "npx solhint ./contracts/**/*.sol"
   },

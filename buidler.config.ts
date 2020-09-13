@@ -20,6 +20,9 @@ export default {
       chaindId: 31337,
       blockGasLimit: 12500000
     },
+    coverage2: {
+      url: 'http://localhost:8555'
+    },
     coverage: {
       url: 'http://localhost:8555'
     }
