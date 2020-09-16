@@ -11,3 +11,6 @@ These external contract calls are gated with the following requirements:
 There are safety functions for the beneficiary to withdraw the balance of tokens (other than the locked token) and ether sent to the contract, accidentially or otherwise.
 
 Once the timelock period is complete, the locked tokens can be withdrawn via the standard method.
+
+## Governor
+Optionally, SmartTimelocks may assign a governor contract which can allow the timelock to send it's tokens to certain addresses, bypassing the balance rules. This is intended by used to allow staking the locked assets in approved contracts without spending them. However, many types of funtionality could be implemented using this feature along with special contracts.
